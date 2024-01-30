@@ -232,3 +232,31 @@ class TransformationPipeline:
         ax1.set_title('PCA before unsupervised anomaly detection')
         ax2.set_title('PCA after unsupervised anomaly detection')
         ax2.legend(loc='best')
+
+    def pca_plot_3d(self, X, label=None, palette=None):
+        # Apply PCA to reduce dimensionality to 3
+        pca = PCA(n_components=3)
+        X_pca = pca.fit_transform(X)
+
+        df = pd.DataFrame(data=X_pca, columns=['PCA1', 'PCA2', 'PCA3'])
+        df['Label'] = label
+
+        # Plot the 3D graph
+        fig = plt.figure(figsize=(10, 8))
+        ax = fig.add_subplot(111, projection='3d')
+
+        # Scatter plot for 'Normal' instances
+        normal_indices = df[df['Label'] == 'normal'].index
+        ax.scatter(df.loc[normal_indices, 'PCA1'], df.loc[normal_indices, 'PCA2'], df.loc[normal_indices, 'PCA3'], c='b', marker='o', label='normal')
+
+        # Scatter plot for 'Attack' instances
+        attack_indices = df[df['Label'] == 'attack'].index
+        ax.scatter(df.loc[attack_indices, 'PCA1'], df.loc[attack_indices, 'PCA2'], df.loc[attack_indices, 'PCA3'], c='r', marker='^', label='attack')
+
+        ax.set_xlabel('PCA1')
+        ax.set_ylabel('PCA2')
+        ax.set_zlabel('PCA3')
+        ax.set_title('3D Scatter Plot of PCA-transformed Data')
+        ax.legend()
+
+        plt.show()
